@@ -4,14 +4,17 @@ import lombok.RequiredArgsConstructor;
 import me.inao.discordbot.Main;
 import me.inao.discordbot.exception.NoSuchServerTextChannelException;
 import me.inao.discordbot.ifaces.IListener;
+import me.inao.discordbot.request.http.Driver;
+import me.inao.discordbot.request.http.post.CaptchaDeletePostRequest;
 import me.inao.discordbot.util.Logger;
 import me.inao.discordbot.util.MessageSender;
 import org.apache.logging.log4j.Level;
-import org.javacord.api.entity.channel.ServerChannel;
+import org.javacord.api.entity.permission.Role;
 import org.javacord.api.event.server.member.ServerMemberLeaveEvent;
 import org.javacord.api.listener.server.member.ServerMemberLeaveListener;
 
 import java.awt.*;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class OnLeaveEvent implements ServerMemberLeaveListener, IListener {
@@ -19,12 +22,26 @@ public class OnLeaveEvent implements ServerMemberLeaveListener, IListener {
     @Override
     public void onServerMemberLeave(ServerMemberLeaveEvent e) {
         if(main.getConfig().isFeatureEnabled("leaveMessage")){
-            e.getServer().getChannelsByName("captcha-"+e.getUser().getIdAsString()).forEach(ServerChannel::delete);
-            new MessageSender(e.getUser().getDiscriminatedName() + " has left",
-                    main.getConfig().getMessage("leave", "success").replace("%_user_%", e.getUser().getDiscriminatedName()),
-                    Color.RED,
-                    e.getServer().getChannelsByName(main.getConfig().getFeatureChannel("leaveMessage")).get(0).asServerTextChannel().orElseThrow(NoSuchServerTextChannelException::new)
-            );
+            Optional<Role> xd = e.getUser().getRoles(e.getServer()).stream()
+                    .filter(r -> r.getName().equals(
+                            "Captcha"
+                    )).findAny();
+            boolean wasCaptcha = xd.isPresent();
+            if(wasCaptcha){
+                CaptchaDeletePostRequest captcha = new CaptchaDeletePostRequest();
+                if (main.getConfig().getFeatureValue("captchaSystem", "httpAuth") != null) {
+                    captcha.getArguments().put("auth", main.getConfig().getFeatureValue("captchaSystem", "httpAuth"));
+                }
+                captcha.getArguments().put("discordId", new String[]{e.getUser().getIdAsString()});
+                new Driver(captcha).postRequestWithoutResponse();
+            }
+            else{
+                new MessageSender(e.getUser().getDiscriminatedName() + " has left",
+                        main.getConfig().getMessage("leave", "success").replace("%_user_%", e.getUser().getDiscriminatedName()),
+                        Color.RED,
+                        e.getServer().getChannelsByName(main.getConfig().getFeatureChannel("leaveMessage")).get(0).asServerTextChannel().orElseThrow(NoSuchServerTextChannelException::new)
+                );
+            }
             new Logger(main, false, true, "Leave", "User " + e.getUser().getDiscriminatedName() + " has left", Level.INFO);
         }
     }

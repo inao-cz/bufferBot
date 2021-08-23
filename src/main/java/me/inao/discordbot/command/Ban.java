@@ -16,7 +16,7 @@ import org.javacord.api.entity.user.User;
 import java.awt.*;
 import java.util.List;
 
-@Permission
+@Permission(PermissionMask = 4)
 public class Ban implements ICommand {
     @Override
     public void onCommand(Main instance, Message message, List<IParameter> args) {

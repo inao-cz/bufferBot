@@ -1,6 +1,7 @@
 package me.inao.discordbot.commands.params;
 
 import lombok.Getter;
+import me.inao.discordbot.annotation.ParameterType;
 import me.inao.discordbot.ifaces.IParameter;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.user.User;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 @Getter
+@ParameterType(type = me.inao.discordbot.enums.ParameterType.USER)
 public class UserParam implements IParameter {
     private final List<User> parsedUsers = new ArrayList<>();
 

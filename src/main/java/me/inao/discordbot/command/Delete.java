@@ -11,7 +11,7 @@ import org.javacord.api.entity.message.MessageSet;
 
 import java.util.List;
 
-@Permission
+@Permission(PermissionMask = 8192)
 public class Delete implements ICommand {
     @Override
     public void onCommand(Main instance, Message message, List<IParameter> args) {
