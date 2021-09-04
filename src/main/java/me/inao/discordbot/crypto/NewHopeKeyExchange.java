@@ -2,6 +2,8 @@ package me.inao.discordbot.crypto;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.inao.discordbot.enums.KeyExchangeType;
+import me.inao.discordbot.ifaces.IKeyExchange;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.pqc.crypto.newhope.NHAgreement;
@@ -11,7 +13,7 @@ import org.bouncycastle.util.encoders.Base64;
 
 import java.security.SecureRandom;
 
-public class KeyExchange {
+public class NewHopeKeyExchange implements IKeyExchange {
     @Getter
     private AsymmetricCipherKeyPair exchangePair;
 
@@ -22,13 +24,18 @@ public class KeyExchange {
     @Getter
     private byte[] sharedSecret = null;
 
+    @Override
+    public KeyExchangeType keyExchangeType() {
+        return KeyExchangeType.NEWHOPE;
+    }
+
     public void initKeys() {
         NHKeyPairGenerator nhKeyPairGenerator = new NHKeyPairGenerator();
         nhKeyPairGenerator.init(new KeyGenerationParameters(new SecureRandom(), 2048));
         exchangePair = nhKeyPairGenerator.generateKeyPair();
     }
 
-    public void createAgreement() {
+    public void createKeyAgreement() {
         NHPublicKeyParameters parameters = new NHPublicKeyParameters(Base64.decode(clientEncodedPubKey));
         NHAgreement nhAgreement = new NHAgreement();
         nhAgreement.init(exchangePair.getPrivate());

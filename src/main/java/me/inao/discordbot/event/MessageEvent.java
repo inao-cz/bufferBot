@@ -19,10 +19,7 @@ public class MessageEvent implements MessageCreateListener, IListener {
 
     @Override
     public void onMessageCreate(MessageCreateEvent e) {
-        if (e.getMessageAuthor().isBotUser()) {
-            return;
-        }
-        if (e.getMessage().isPrivateMessage()) {
+        if(instance.getConfig().getCommand("slashCommands").getAsBoolean() || e.getMessageAuthor().isBotUser() || e.getMessage().isPrivateMessage()){
             return;
         }
         if (instance.getConfig().isFeatureEnabled("channelLimit") || instance.getConfig().isCommandEnabled("Count")) {
@@ -50,7 +47,7 @@ public class MessageEvent implements MessageCreateListener, IListener {
             }
         }
         if (!e.getMessageContent().isEmpty() && e.getMessage().getContent().startsWith(String.valueOf(instance.getConfig().getPrefix()))) {
-            executor.execute(e.getMessage(), this.instance);
+            executor.execute(e.getMessage(), instance);
         }
     }
 }

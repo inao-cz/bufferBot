@@ -55,7 +55,7 @@ public class Main {
         try {
             loader.loadListeners("me.inao.discordbot.event", apiBuilder).run();
             new Thread(loader.loadParams("me.inao.discordbot.commands.params")).start();
-            new Thread(loader.loadCommands("me.inao.discordbot.command")).start();
+            loader.loadCommands("me.inao.discordbot.command").run();
         } catch (Exception e) {
             new ExceptionCatcher(e);
             new me.inao.discordbot.util.Logger(this, true, false, "Loading problem", "Cannot load bot (Event/Command). Shutting down!", Level.FATAL);

@@ -8,6 +8,7 @@ import me.inao.discordbot.ifaces.IListener;
 import me.inao.discordbot.ifaces.IParameter;
 import org.apache.logging.log4j.Level;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.interaction.SlashCommand;
 import org.javacord.api.listener.GloballyAttachableListener;
 import org.reflections.Reflections;
 
@@ -49,9 +50,19 @@ public class Loader {
             for (Class<? extends ICommand> command : classes) {
                 if (main.getConfig().isCommandEnabled(command.getSimpleName())) {
                     try {
-                        loadedCommands.put(command.getSimpleName(), command.getDeclaredConstructor().newInstance());
+                        ICommand instance = command.getDeclaredConstructor().newInstance();
+                        loadedCommands.put(command.getSimpleName(), instance);
+                        if(main.getConfig().getCommand("slashCommands").getAsBoolean()){
+                            String description = "Without description";
+                            try{
+                                description = main.getConfig().getCommand(command.getSimpleName()).getAsJsonObject().get("description").getAsString();
+                            }catch (Exception ignored){}
+                            SlashCommand.with(command.getSimpleName().toLowerCase(Locale.ROOT), description
+                            ).createForServer(main.getApi().getServers().iterator().next()).get();
+                        }
                         new Logger(main, "Loaded command: " + command.getSimpleName(), Level.DEBUG);
                     } catch (Exception e) {
+                        e.printStackTrace();
                         new Logger(main, "Command loading failed: " + e.getLocalizedMessage(), Level.ERROR);
                     }
                 }

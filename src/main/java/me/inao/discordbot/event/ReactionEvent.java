@@ -22,9 +22,9 @@ public class ReactionEvent implements ReactionAddListener, IListener {
 
     @Override
     public void onReactionAdd(ReactionAddEvent e) {
-        if(!e.getUser().isPresent() || !e.getServer().isPresent() || !e.getChannel().asServerTextChannel().isPresent()) return;
+        if(e.getUser().isEmpty() || e.getServer().isEmpty() || e.getChannel().asServerTextChannel().isEmpty()) return;
 
-        if (!e.getUser().get().isBot() && main.getConfig().isCommandEnabled("captchaSystem") && e.getChannel().asServerTextChannel().get().getName().contains("captcha") && e.getEmoji().equalsEmoji(EmojiParser.parseToUnicode(":white_check_mark:"))) {
+        if (!e.getUser().get().isBot() && main.getConfig().isFeatureEnabled("captchaSystem") && e.getChannel().asServerTextChannel().get().getName().contains("captcha") && e.getEmoji().equalsEmoji(EmojiParser.parseToUnicode(":white_check_mark:"))) {
             CaptchaCheckPostRequest captcha = new CaptchaCheckPostRequest();
             if (main.getConfig().getFeatureValue("captchaSystem", "httpAuth") != null) {
                 captcha.getArguments().put("auth", main.getConfig().getFeatureValue("captchaSystem", "httpAuth"));
