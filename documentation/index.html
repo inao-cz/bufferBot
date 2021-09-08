@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>bufferBot documentation.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js"></script>
+    <style>
+        code {
+            font-family: Consolas,"courier new",serif;
+            background-color: #f1f1f1;
+            padding: 2px;
+            font-size: 105%;
+        }
+    </style>
+</head>
+<body class="grey darken-3 white-text">
+<div id="top"></div>
+<div class="navbar-fixed">
+    <nav>
+        <div class="nav-wrapper grey darken-2">
+            <a href="#top" class="brand-logo">bufferBot</a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="#basic_info">Welcome</a></li>
+                <li><a href="#config">Config</a></li>
+                <li><a href="#cmd_autoload">Autoload</a></li>
+            </ul>
+        </div>
+    </nav>
+</div>
+<!-- Introduction section -->
+<div class="container" id="basic_info">
+    <h5>Welcome to this documentation.<br/>Please, keep in mind that this documentation is still in progress and can get
+        updated over time. :)</h5>
+    <div class="divider"></div>
+    <div class="section">
+        <h5>Basic info</h5>
+        <p>This project is meant as a Discord bot base, based on Javacord in language Java. Right now, base is running
+            on Java 8.</p>
+        <p>Some of powerful features:</p>
+        <ul class="collection black-text">
+            <li class="collection-item">Empowering Reflections to create autoloading of classes</li>
+            <li class="collection-item">Possibility to use SQLite for data saving. Meaning you don't have to run own
+                database server.
+            </li>
+            <li class="collection-item">Usage of Log4j2 library. Logging both into Discord channel itself and file. This
+                can be fully configured in code
+            </li>
+            <li class="collection-item">Empowering Project Lombok. So any Getters and Setters in code are history here,
+                we are doing it using annotations
+            </li>
+            <li class="collection-item">Own communication server to connect ANY API on bot side. For example, connect
+                Discord with Minecraft to create sync between permissions, chat messages and more
+            </li>
+            <li class="collection-item">Extensible config trough Google GSON library</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Configuration -->
+<div class="container" id="config">
+    <div class="divider"></div>
+    <div class="section">
+        <h5>Configuration</h5>
+        <p>Configuration in this project is done trough JSON format. Google GSON is being used to load config files.</p>
+        <p>There are two files.</p>
+        <p>One of them is <code class="black-text">config.local.json</code> and this file is meant
+            for local development purposes. File is being ignored by default in <code
+                    class="black-text">.gitignore</code></p>
+        <p>Second is <code class="black-text">config.json</code>. This file is meant as production
+            file. FILE IS NOT IN .gitignore!</p>
+        <p>Config data itself is being held in memory as object <code
+                class="black-text">Config</code> so please keep in mind, any changes done to the JSON
+            file has to be reflected in this object too</p>
+        <h5>Some IFs</h5>
+        <p>If file <code class="black-text">config.local.json</code> is present, any values are taken
+            from this file and <code class="black-text">config.json</code> is ignored. This is to
+            provide maximum comfort to the developer</p>
+    </div>
+</div>
+
+<!-- Autoload -->
+<div class="container" id="cmd_autoload">
+    <div class="divider"></div>
+    <div class="section">
+        <h5>Autoloading</h5>
+        <p>As mentioned in introduction, this base uses Reflections to create autoloading. But even this really comfy
+            feature has some rules.</p>
+        <p>But first, how this works? If some certain condition is met, autoloader will try to load a class and create a
+            new instance of it. This happens only on bot load, after that a map of these elements is held in memory.</p>
+        <p>This at first doesn't sound like a good idea, but it's actually really comfy for the developer, and I think
+            it's even better in preventing errors or forgetting something.</p>
+        <p>Autoloading is able to handle Commands, EventListeners and Command Parameters</p>
+        <p>Please remember Permission annotation, this will get handy later on.</p>
+        <h5>Some IFs</h5>
+        <p>Command loading happens only in package <code class="black-text">me.inao.discordbot.command</code>
+            but package can be changed in class <code class="black-text">Main.java#L58</code>. Command has to be tagged by appropriate interface <code class="black-text">ICommand.java</code></p>
+        <p>EventsListeners loading happens only in package <code class="black-text">me.inao.discordbot.event</code>
+            but package can be changed in class <code class="black-text">Main.java#L56</code>. EventListener has to be tagged by appropriate interface <code class="black-text">IListener.java</code></p>
+        <p>Do I have to write it down for CommandParameters as well? It's exactly the same.</p>
+        <p>Modifying constructors for one class will most probably render it not loadable and throw an exception.</p>
+        <h5>Code examples</h5>
+        <p>Basic structure of command class. Note that this is the required minimum for it to even load.</p>
+        <pre>
+            <code class="language-java">package me.inao.discordbot.command;
+
+import me.inao.discordbot.Main;
+import me.inao.discordbot.annotation.Permission;
+import me.inao.discordbot.ifaces.ICommand;
+import me.inao.discordbot.ifaces.IParameter;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageSet;
+
+import java.util.List;
+
+@Permission(PermissionMask = 8192)
+public class Delete implements ICommand {
+    @Override
+    public void onCommand(Main instance, Message message, List&lt;IParameter&gt; args) {
+    }
+
+    @Override
+    public Class<? extends IParameter>[] requiredParameters() {
+        return new Class[0];
+    }
+}
+            </code>
+        </pre>
+    </div>
+</div>
+
+<!-- some scripts. -->
+<script>
+    hljs.highlightAll();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</body>
+</html>
