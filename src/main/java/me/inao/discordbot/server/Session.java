@@ -1,12 +1,14 @@
 package me.inao.discordbot.server;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import me.inao.discordbot.crypto.KeyExchange;
+import me.inao.discordbot.ifaces.IKeyExchange;
 
 import java.util.Date;
 
 @Getter
+@RequiredArgsConstructor
 public class Session {
     @Setter
     private Date validity;
@@ -17,5 +19,5 @@ public class Session {
     @Setter
     private byte[] secret;
 
-    private final KeyExchange keyExchange = new KeyExchange();
+    private final IKeyExchange keyExchange;
 }

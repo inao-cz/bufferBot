@@ -87,7 +87,6 @@ public class PGP {
         PGPSignatureSubpacketGenerator signatureSubpacketGenerator1 = new PGPSignatureSubpacketGenerator();
         signatureSubpacketGenerator1.setKeyFlags(false, KeyFlags.ENCRYPT_COMMS|KeyFlags.ENCRYPT_STORAGE);
         PGPDigestCalculator sha1Digest = new BcPGPDigestCalculatorProvider().get(HashAlgorithmTags.SHA1);
-        PGPDigestCalculator sha256Digest = new BcPGPDigestCalculatorProvider().get(HashAlgorithmTags.SHA256);
         PGPDigestCalculator sha512Digest = new BcPGPDigestCalculatorProvider().get(HashAlgorithmTags.SHA512);
         PBESecretKeyEncryptor pbeSecretKeyEncryptor = ((new BcPBESecretKeyEncryptorBuilder(PGPEncryptedData.AES_256, sha512Digest, 255)).build(pass));
         PGPKeyRingGenerator keyRingGen =

@@ -27,6 +27,8 @@
             <a href="#top" class="brand-logo">bufferBot</a>
             <ul class="right hide-on-med-and-down">
                 <li><a href="#basic_info">Welcome</a></li>
+                <li><a href="#build">Build</a></li>
+                <li><a href="#structure">Structure</a></li>
                 <li><a href="#config">Config</a></li>
                 <li><a href="#cmd_autoload">Autoload</a></li>
             </ul>
@@ -43,22 +45,65 @@
         <p>This project is meant as a Discord bot base, based on Javacord in language Java. Right now, base is running
             on Java 8.</p>
         <p>Some of powerful features:</p>
-        <ul class="collection black-text">
-            <li class="collection-item">Empowering Reflections to create autoloading of classes</li>
-            <li class="collection-item">Possibility to use SQLite for data saving. Meaning you don't have to run own
+        <ul class="collection white-text">
+            <li class="collection-item grey darken-4">Empowering Reflections to create autoloading of classes</li>
+            <li class="collection-item grey darken-4">Possibility to use SQLite for data saving. Meaning you don't have to run own
                 database server.
             </li>
-            <li class="collection-item">Usage of Log4j2 library. Logging both into Discord channel itself and file. This
+            <li class="collection-item grey darken-4">Usage of Log4j2 library. Logging both into Discord channel itself and file. This
                 can be fully configured in code
             </li>
-            <li class="collection-item">Empowering Project Lombok. So any Getters and Setters in code are history here,
+            <li class="collection-item grey darken-4">Empowering Project Lombok. So any Getters and Setters in code are history here,
                 we are doing it using annotations
             </li>
-            <li class="collection-item">Own communication server to connect ANY API on bot side. For example, connect
+            <li class="collection-item grey darken-4">Own communication server to connect ANY API on bot side. For example, connect
                 Discord with Minecraft to create sync between permissions, chat messages and more
             </li>
-            <li class="collection-item">Extensible config trough Google GSON library</li>
+            <li class="collection-item grey darken-4">Extensible config trough Google GSON library</li>
+            <li class="collection-item grey darken-4">Strong cryptography using BouncyCastle library</li>
         </ul>
+    </div>
+</div>
+
+<!-- Build -->
+<div class="container" id="build">
+    <h5>Build and install</h5>
+    <div class="divider"></div>
+    <div class="section">
+        <p>Project is using maven as dependency management and building tool. pom.xml provided has already been configured to provide you build with all libs needed, so-called FatJar.</p>
+        <p>To build this project with all of your changes, just execute task <code class="black-text">install</code>. When this task is executed successfully, go to the directory target. There should be file <code class="black-text">inaosBot-{version}-jar-with-dependencies.jar</code>. This is your file.</p>
+    </div>
+</div>
+
+<!-- Code structure -->
+<div class="container" id="structure">
+    <h5>Code structure</h5>
+    <div class="divider"></div>
+    <div class="section">
+        <pre>
+            <code class="language-plaintext">
+me.inao.discordbot
+ |- annotation   --> Annotations are kept here
+ |- buffer       --> Anything that might be needed to keep for longer period of time (in memory)
+ |- command      --> Commands code. Autoloading happens in this package (Read more in chapter "Autoload")
+ |- commands     --> Command and Parameters parsing.
+     |- params   --> Command parameters. Autoloading happens here (Read more in chapter "Autoload")
+ |- crypto       --> Utilities for cryptography.
+ |- enums        --> Enum types package.
+ |- event        --> EventListeners. Autoloading happens here (Read more in chapter "Autoload")
+ |- exception    --> Because sometimes even custom exception is needed.
+ |- ifaces       --> All of interfaces on one big pile.
+ |- objects      --> Objects that have some purpose but were not sorted specifically.
+ |- request      --> Requests on external API should be stored here.
+     |- http     --> Package for HTTP requests.
+         |- post --> Only HTTP POST requests.
+ |- server       --> UDP custom communication server. More in chapter "Custom communication"
+     |- packets  --> All possible packets in one place.
+     |- threads  --> Timed tasks only for custom server, running in own threads.
+ |- tasks        --> Timed tasks for other functionalities.
+ |- utils        --> Do I have to explain this? Utilities on one big pile.
+            </code>
+        </pre>
     </div>
 </div>
 
@@ -110,28 +155,34 @@
             <code class="language-java">package me.inao.discordbot.command;
 
 import me.inao.discordbot.Main;
-import me.inao.discordbot.annotation.Permission;
 import me.inao.discordbot.ifaces.ICommand;
 import me.inao.discordbot.ifaces.IParameter;
 import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.MessageSet;
 
 import java.util.List;
 
-@Permission(PermissionMask = 8192)
-public class Delete implements ICommand {
+public class About implements ICommand {
     @Override
-    public void onCommand(Main instance, Message message, List&lt;IParameter&gt; args) {
+    public void onCommand(Main instance, Message message, List&lt;IParameter> args) {
+
     }
 
     @Override
     public Class<? extends IParameter>[] requiredParameters() {
         return new Class[0];
     }
-}
-            </code>
+}</code>
         </pre>
     </div>
+</div>
+
+<!-- Annotations -->
+<div class="container" id="annotations">
+    <h5>Annotations</h5>
+    <div class="divider"></div>
+    <p>Right now, there are two custom annotations. ParameterType and Permissions. While ParameterType is not used in the wild yet, Permission is pretty useful already. Let's talk about these.</p>
+    <p><span class="blue-text lighten-1">ParameterType</span> is for command parameters. In default command mode (Own command parser and executor), this annotation is useless. But when the new command system (Slash commands) is used, this Annotation is used to tell Discord what type of data should be provided as parameters.</p>
+    <p><span class="blue-text lighten-1">Permission</span> annotations in really useful right now. This permission will set default permission bitmask value for command. If a command class contains this annotation and command <span class="red-text">IS NOT CONFIGURED IN CONFIG</span> (Config has higher powers here and if command has configured permission in config.json, permissions will be overridden by config), permissions will be checked on try to execute.</p>
 </div>
 
 <!-- some scripts. -->

@@ -4,5 +4,4 @@ import me.inao.discordbot.enums.PacketType;
 
 public interface IPacket {
     PacketType packetType();
-    void parsePacket();
 }

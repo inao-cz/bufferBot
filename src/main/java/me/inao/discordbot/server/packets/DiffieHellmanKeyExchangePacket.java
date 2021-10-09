@@ -1,7 +1,10 @@
-package me.inao.discordbot.crypto;
+package me.inao.discordbot.server.packets;
 
 import me.inao.discordbot.enums.KeyExchangeType;
+import me.inao.discordbot.enums.PacketType;
 import me.inao.discordbot.ifaces.IKeyExchange;
+import me.inao.discordbot.ifaces.IPacket;
+import me.inao.discordbot.server.Session;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.jce.spec.ECPrivateKeySpec;
@@ -9,13 +12,19 @@ import org.bouncycastle.jce.spec.ECPublicKeySpec;
 import org.bouncycastle.util.encoders.Base64;
 
 import javax.crypto.KeyAgreement;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
 
-public class DiffieHellmanKeyExchange implements IKeyExchange {
+public class DiffieHellmanKeyExchangePacket implements IPacket, IKeyExchange {
+    private KeyPair keyPair;
 
-    private KeyPair pair;
+    @Override
+    public PacketType packetType() {
+        return PacketType.KEY_EXCHANGE;
+    }
 
     @Override
     public KeyExchangeType keyExchangeType() {
@@ -27,15 +36,15 @@ public class DiffieHellmanKeyExchange implements IKeyExchange {
         try {
             KeyPairGenerator generator = KeyPairGenerator.getInstance("ECDH", "BC");
             generator.initialize(new ECGenParameterSpec("prime256v1"), new SecureRandom());
-            pair = generator.generateKeyPair();
+            keyPair = generator.generateKeyPair();
         } catch (Exception e) {
-            pair = null;
+            keyPair = null;
             e.printStackTrace();
         }
     }
 
     @Override
-    public void createKeyAgreement() {
+    public void createKeyAgreement(BufferedReader reader, PrintWriter writer, Session session) {
 
     }
 
@@ -78,7 +87,7 @@ public class DiffieHellmanKeyExchange implements IKeyExchange {
     public byte[] calculateKey(byte[] pubKey) {
         try {
             KeyAgreement secretAgreement = KeyAgreement.getInstance("ECDH", "BC");
-            secretAgreement.init(pair.getPrivate());
+            secretAgreement.init(keyPair.getPrivate());
             secretAgreement.doPhase(getPubKeyFromBytes(pubKey), true);
             return secretAgreement.generateSecret();
         } catch (Exception e) {
