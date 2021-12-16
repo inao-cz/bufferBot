@@ -1,9 +1,11 @@
 package me.inao.discordbot.commands.params;
 
 import lombok.Getter;
+import me.inao.discordbot.annotation.ParameterType;
 import me.inao.discordbot.ifaces.IParameter;
 import org.javacord.api.DiscordApi;
 
+@ParameterType(type = me.inao.discordbot.enums.ParameterType.NUMBER)
 public class CountParam implements IParameter {
     @Getter
     private int count = 0;

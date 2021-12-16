@@ -7,7 +7,7 @@ import me.inao.discordbot.ifaces.IParameter;
 import org.javacord.api.entity.message.Message;
 
 import java.util.List;
-@Permission
+@Permission(PermissionMask = 16)
 public class Count implements ICommand {
 
     @Override

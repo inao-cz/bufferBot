@@ -12,7 +12,7 @@ import org.javacord.api.entity.user.User;
 
 import java.util.List;
 
-@Permission
+@Permission(PermissionMask = 2)
 public class Kick implements ICommand {
 
     @Override

@@ -1,0 +1,5 @@
+package me.inao.discordbot.enums;
+
+public enum ClientStatus {
+    CONNECTED, PGP_SENT, PGP_VERIFIED, KX_SENT, KX_DONE, KEY_ESTABLISHED, CONFIRMED, SESSION_RENEWED, KEY_RENEWAL_NEEDED
+}

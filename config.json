@@ -3,12 +3,15 @@
   "prefix": "!",
   "botState": 2,
   "loggingLevel": "INFO",
-  "features": [{
+  "features": {
     "blacklistSystem": {
       "enabled": true,
       "data": "permission denied"
     },
-    "channelLimit":{
+    "commandChaining": {
+      "enabled": true
+    },
+    "channelLimit": {
       "enabled": true,
       "data": "bot-commands"
     },
@@ -17,7 +20,7 @@
       "data": "retard"
     },
     "captchaSystem": {
-      "enabled": true,
+      "enabled": false,
       "data": "www-data;Captcha;Pleb",
       "httpAuth": "",
       "userThreshold": 25,
@@ -31,7 +34,7 @@
       "category": "useless"
     },
     "leaveMessage": {
-      "enabled": true,
+      "enabled": false,
       "data": null,
       "room": "welcome",
       "category": "useless"
@@ -51,73 +54,70 @@
     "midnightRestart": {
       "enabled": true
     }
-  }],
-  "commands": [{
+  },
+  "commands": {
+    "slashCommands": false,
+    "About": {
+      "enabled": true
+    },
     "Ban": {
       "enabled": true,
-      "channelName": "bans",
-      "perms": 4
+      "description": "Ban command.",
+      "channelName": "bans"
     },
     "Count": {
       "enabled": false,
-      "channelName": "countgame",
-      "perms": 16
+      "description": "Creates countgame in configured channel.",
+      "channelName": "countgame"
     },
     "Delete": {
       "enabled": true,
-      "perms": 8192
-    },
-    "Mute": {
-      "enabled": true,
-      "perms": 4
+      "description": "Delete specified count of messages in channel"
     },
     "Kick": {
       "enabled": true,
-      "perms": 2
+      "description": "Kick user"
     },
     "Ping": {
       "enabled": true,
-      "perms": 8
+      "description": "Ping. Pong!"
     },
-    "Setup": {
+    "Reload": {
       "enabled": true,
-      "perms": 8
-    },
-    "Tell": {
-      "enabled": false,
-      "perms": 8192
-    },
-    "Test": {
-      "enabled": true,
-      "perms": 8
+      "description": "Reload the config"
     },
     "ServerToken": {
-      "enabled": false,
-      "perms": 8
+      "enabled": false
+    },
+    "Help": {
+      "enabled": true,
+      "description": "Get bot help. I mean, is it even needed when we have Slash commands?"
     }
-  }],
-  "events": [{
+  },
+  "events": {
     "welcome": {
       "enabled": true,
       "channel": "welcome"
     }
-  }],
-  "server": [{
-    "enabled": true,
+  },
+  "server": {
+    "enabled": false,
     "port": 1337,
     "gpg": {
       "pass": "changeMe",
       "name": "Testing User",
       "email": "elliot.alderson@allsafe.com"
     },
-    "tokens": [{
-      "test": {
-        "perms": 8,
-        "name": "test"
+    "tokens": [
+      {
+        "test": {
+          "perms": 8,
+          "name": "test"
+        }
       }
-    }]
-  }],
-  "messages": [{
+    ]
+  },
+  "messages": {
     "generic": {
       "no_perms": "Sorry, you don't have permissions for that :sad:",
       "no_args": "You haven't provided enough args :sad:"
@@ -136,29 +136,5 @@
     "ban": {
       "success": "User %_user_% has been banned from our server."
     }
-  }],
-  "setup": [{
-    "groups": {
-      "owner": {
-        "color": "#347DFA",
-        "perms": 2147483647
-      },
-      "admin": {
-        "color": "#FA3C50",
-        "perms": 1342173127
-      },
-      "captcha": {
-        "color": "#FFFFFF",
-        "perms": 0
-      }
-    },
-    "categories": {
-      "captcha": {
-        "group": "Captcha"
-      },
-      "admin": {
-        "group": "Admin"
-      }
-    }
-  }]
+  }
 }

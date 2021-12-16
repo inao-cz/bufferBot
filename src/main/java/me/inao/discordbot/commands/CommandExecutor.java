@@ -43,7 +43,8 @@ public class CommandExecutor {
 
         if(command.isPresent()) {
             if(command.get().getClass().isAnnotationPresent(Permission.class)){
-                if (!instance.getPermissionable().checkPermission(message, command.get().getClass()))  return;
+                if (!instance.getPermissionable().checkPermission(message, command.get().getClass()))
+                    return;
             }
             List<Boolean> requiredAreProvided = new ArrayList<>();
             for(Class<? extends IParameter> param : command.get().requiredParameters()){

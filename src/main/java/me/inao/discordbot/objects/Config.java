@@ -2,12 +2,11 @@ package me.inao.discordbot.objects;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import me.inao.discordbot.util.ExceptionCatcher;
-
-import java.util.List;
 
 public class Config {
     @SerializedName("apiKey")
@@ -32,96 +31,66 @@ public class Config {
 
     @SerializedName("features")
     @Expose
-    List<JsonObject> features;
+    JsonObject features;
 
     @SerializedName("commands")
     @Expose
-    List<JsonObject> commands;
+    JsonObject commands;
 
     @SerializedName("server")
     @Expose
-    List<JsonObject> server;
+    JsonObject server;
 
     @SerializedName("messages")
     @Expose
-    List<JsonObject> messages;
+    JsonObject messages;
 
     @SerializedName("setup")
     @Expose
     @Getter
-    List<JsonObject> setup;
+    JsonObject setup;
 
     public boolean isCommandEnabled(String name){
         try{
-            for (JsonObject command : commands){
-                return command.getAsJsonObject(name).get("enabled").getAsBoolean();
-            }
-        }catch (Exception ignored){ }
-        return true;
+            return commands.getAsJsonObject(name).get("enabled").getAsBoolean();
+        }catch (Exception e){
+            System.out.println(name);
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public JsonPrimitive getCommand(String name){
+        return commands.getAsJsonPrimitive(name);
     }
 
     public String getCommandMessage(String name){
-        try{
-            for (JsonObject command : commands){
-                return command.getAsJsonObject(name).get("message").getAsString();
-            }
-        }catch (Exception e){
-            System.out.println("No command found :(");
-        }
-        return null;
+        return commands.getAsJsonObject(name).get("message").getAsString();
     }
     public String getCommandRoom(String name){
-        try{
-            for (JsonObject command : commands){
-                return command.getAsJsonObject(name).get("channelName").getAsString();
-            }
-        }catch (Exception e){
-            System.out.println("No command found :(");
-        }
-        return null;
+        return commands.getAsJsonObject(name).get("channelName").getAsString();
     }
     public String getCommandPerms(String name){
         try{
-            for (JsonObject command : commands){
-                return command.getAsJsonObject(name).get("perms").getAsString();
-            }
-        }catch (Exception e){
-            System.out.println("No command found :(");
-        }
+            return commands.getAsJsonObject(name).get("perms").getAsString();
+        }catch (Exception ignored){}
         return null;
     }
     public String getServerProperty(String name){
-        try{
-            return server.get(0).get(name).getAsString();
-        }catch (Exception e){
-            new ExceptionCatcher(e);
-        }
-        return null;
+        return server.get(name).getAsString();
     }
 
     public String getServerGpgProperty(String property){
-        try{
-            return server.get(0).get("gpg").getAsJsonObject().getAsJsonPrimitive(property).getAsString();
-        }catch (Exception e){
-            new ExceptionCatcher(e);
-        }
-        return null;
+        return server.get("gpg").getAsJsonObject().getAsJsonPrimitive(property).getAsString();
     }
 
     public JsonArray getServerTokens(){
-        try{
-            return server.get(0).get("tokens").getAsJsonArray();
-        }catch(Exception e){
-            new ExceptionCatcher(e);
-        }
-        return null;
+        return server.get("tokens").getAsJsonArray();
     }
 
     public boolean isFeatureEnabled(String name){
         try{
-            for (JsonObject other : features){
-                return other.getAsJsonObject(name).get("enabled").getAsBoolean();
-            }
+            return features.getAsJsonObject(name).get("enabled").getAsBoolean();
         }catch (Exception e){
             System.out.println(name);
             System.out.println("Feature not found in config :(");
@@ -130,9 +99,7 @@ public class Config {
     }
     public String getFeatureData(String name){
         try{
-            for (JsonObject other : features){
-                return other.getAsJsonObject(name).get("data").getAsString();
-            }
+            return features.getAsJsonObject(name).get("data").getAsString();
         }catch (Exception e){
             System.out.println(name);
             System.out.println("Feature not found in config :(");
@@ -141,9 +108,7 @@ public class Config {
     }
     public String getFeatureChannel(String name){
         try{
-            for (JsonObject object : features){
-                return object.getAsJsonObject(name).get("room").getAsString();
-            }
+            return features.getAsJsonObject(name).get("room").getAsString();
         }catch (Exception e) {
             System.out.println(name);
             System.out.println("No room set :(");
@@ -153,9 +118,7 @@ public class Config {
 
     public Object getFeatureValue(String feature, String value){
         try{
-            for (JsonObject object : features){
-                return object.getAsJsonObject(feature).get(value).getAsString();
-            }
+            return features.getAsJsonObject(feature).get(value).getAsString();
         }catch (Exception e){
             new ExceptionCatcher(e);
         }
@@ -164,9 +127,7 @@ public class Config {
 
     public String getMessage(String module, String message){
         try{
-            for(JsonObject object : messages){
-                return object.getAsJsonObject(module).get(message).getAsString();
-            }
+            return messages.getAsJsonObject(module).get(message).getAsString();
         }catch (Exception e){
             System.out.println("Message not found :(");
         }
